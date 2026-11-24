@@ -17,7 +17,7 @@ def read_microfon(duration):
     samples=[]
     end=time.monotonic()+duration
     while(time.monotonic()<end):
-        samples.append(GPIO.input(Pin_led))
+        samples.append(GPIO.input(Pin_microfon))
     return np.array(samples)
 
 def procent_zgomot(samples):
@@ -43,5 +43,25 @@ def alarma(duration):
         GPIO.output(Pin_buzzer, GPIO.LOW)
         time.sleep(0.2)
     GPIO.output(Pin_buzzer, GPIO.LOW)
+    GPIO.output(Pin_led, GPIO.LOW)
 
 #alarma(3)
+durata_alarma=3
+pauza=1
+def main():
+    setp_pins()
+    try:
+        print("Se calibreaza")
+        prag=calibrate(5)
+        while True:
+            p = procent_zgomot(read_microfon(0.5))
+            print(f"{p:.2f} %")
+            if p > prag:
+                print("ALARMĂ!")
+                alarma(durata_alarma)
+                time.sleep(pauza)
+    except KeyboardInterrupt: pass
+    finally:
+        GPIO.cleanup()
+if __name__ == "__main__":
+    main()
