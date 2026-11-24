@@ -13,4 +13,11 @@ def setp_pins():
     GPIO.setup(Pin_buzzer, GPIO.OUT, initial=GPIO.LOW)
     print("configurat cu succes!")
     GPIO.cleanup()
+setp_pins()
 
+def read_microfon(duration):
+    samples=[]
+    end=time.monotonic()+duration
+    while(time.monotonic()<end):
+        samples.append(GPIO.input(Pin_led))
+    return np.array(samples)
