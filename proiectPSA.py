@@ -21,3 +21,17 @@ def read_microfon(duration):
     while(time.monotonic()<end):
         samples.append(GPIO.input(Pin_led))
     return np.array(samples)
+
+def procent_zgomot(samples):
+    try:
+        return 100*np.count_nonzero(samples)/samples.size
+    except ZeroDivisionError: return 0
+
+def calibrate(seconds):
+    levels=[]
+    for i in range(seconds):
+        levels.append(procent_zgomot(read_microfon(seconds)))
+    levels = np.array(levels)
+    prag=levels.mean()+3*levels.std()
+    prag=max(prag, 0.2)
+    return prag
